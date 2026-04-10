@@ -2,8 +2,8 @@ package handlers
 
 import (
 	"net/http"
-	"practicum_8/config"
-	"practicum_8/models"
+	"practicum_9/config"
+	"practicum_9/models"
 	"strconv"
 
 	"github.com/gin-gonic/gin"

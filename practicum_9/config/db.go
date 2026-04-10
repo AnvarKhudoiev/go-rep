@@ -1,7 +1,7 @@
 package config
 
 import (
-	"practicum_8/models"
+	"practicum_9/models"
 	"log"
 
 	"gorm.io/driver/postgres"
@@ -16,7 +16,7 @@ func ConnectDB() {
 	if err != nil {
 		log.Fatal("Failed to connect to database:", err)
 	}
-	database.AutoMigrate(&models.Todo{})
+	database.AutoMigrate(&models.Todo{}, &models.User{}, &models.Author{})
 
 	DB = database
 }
