@@ -1,0 +1,39 @@
+# Go-related files
+/bin/
+/pkg/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Go modules and caches
+/go.sum
+/go.work
+/go.work.sum
+
+# GoLand IDE settings
+.idea/
+*.iml
+
+# Logs and temp files
+*.log
+*.tmp
+
+# Build artifacts
+/dist/
+/vendor/
+
+# Environment files
+.env
+.env.*
+
+# Coverage reports
+*.cover
+*.cov
+
+# Temporary files
+.DS_Store
+Thumbs.db
