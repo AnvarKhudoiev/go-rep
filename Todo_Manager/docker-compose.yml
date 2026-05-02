@@ -1,7 +1,6 @@
 version: '3.8'
 
 services:
-  # База данных для Auth
   auth_db:
     image: postgres:15-alpine
     environment:
@@ -9,9 +8,8 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: auth_db
     ports:
-      - "5441:5432" # Прокидываем на 5441, чтобы не конфликтовать с локальной БД
+      - "5441:5432" 
 
-  # База данных для Todo
   todo_db:
     image: postgres:15-alpine
     environment:
@@ -21,7 +19,6 @@ services:
     ports:
       - "5442:5432"
 
-  # Сервис авторизации
   auth_service:
     build:
       context: .
@@ -39,7 +36,6 @@ services:
       - DB_NAME=auth_db
       - JWT_SECRET=your_super_secret_key
 
-  # Сервис задач
   todo_service:
     build:
       context: .

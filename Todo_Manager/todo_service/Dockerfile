@@ -9,7 +9,6 @@ RUN go mod download
 
 COPY . .
 
-# Собираем конкретно todo_service
 RUN go build -o todo-app ./todo_service/main.go
 
 EXPOSE 8082
