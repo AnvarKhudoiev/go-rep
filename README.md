@@ -522,9 +522,8 @@ Import `Todo_Manager.postman_collection.json` into Postman.
 15. Update Category
 16. Delete Category
 17. Get Statistics
-18. Internal - Default Categories
-19. Delete Todo
-20. **Logout** ← run last
+18. Delete Todo
+19. **Logout** ← run last
 
 > ⚠️ Run **Login** before any authenticated requests. Run **Logout** last — it invalidates the token.
 
@@ -532,7 +531,7 @@ Import `Todo_Manager.postman_collection.json` into Postman.
 
 ## 👤 Author
 
-**Anvar Shokhkhudoiev**
+**Anvarshokh Khudoiev**
 
 ---
 
