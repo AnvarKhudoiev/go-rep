@@ -13,7 +13,7 @@ import (
 
 func main() {
 
-	err := godotenv.Load(".env")
+	err := godotenv.Load("auth_service/.env")
 	if err != nil {
 		log.Println("Warning: Error loading .env file. Using system environment variables.")
 	}
@@ -29,6 +29,7 @@ func main() {
 	}))
 	r.POST("/register", handlers.Register)
 	r.POST("/login", handlers.Login)
+	r.POST("/logout", handlers.Logout)
 	r.GET("/users/:id", handlers.GetUserByID)
 
 	log.Println("AuthService is running on port 8081...")

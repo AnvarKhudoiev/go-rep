@@ -15,6 +15,7 @@ export interface Category {
   name: string
   color: string
   user_id: number
+  is_default: boolean  // ← добавить
 }
 
 export interface Todo {
@@ -28,6 +29,8 @@ export interface Todo {
   tags: Tag[]
   created_at: string
   updated_at: string
+  priority: "low" | "medium" | "high"  // ← добавить
+  due_date: string | null               // ← добавить
 }
 
 export interface CreateTodoInput {
@@ -35,6 +38,8 @@ export interface CreateTodoInput {
   description?: string
   completed?: boolean
   category_id?: number
+  priority?: "low" | "medium" | "high"  // ← добавить
+  due_date?: string                      // ← добавить
   tags?: { name: string }[]
 }
 
@@ -95,6 +100,7 @@ export interface Stats {
   total: number
   completed: number
   active: number
+  overdue: number        // ← добавить
   completion_rate: number
   week: DayStats[]
   by_category: CategoryStats[]

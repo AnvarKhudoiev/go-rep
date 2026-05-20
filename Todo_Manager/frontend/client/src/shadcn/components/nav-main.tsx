@@ -27,6 +27,7 @@ export function NavMain({
       title: string
       url: string
       isActive?: boolean
+      badge?: number
       onClick?: () => void
     }[]
   }[]
@@ -60,7 +61,14 @@ export function NavMain({
                         onClick={subItem.onClick}
                       >
                         {subItem.onClick ? (
-                          <span>{subItem.title}</span>
+                          <span className="flex items-center justify-between w-full">
+                            <span>{subItem.title}</span>
+                            {subItem.badge ? (
+                              <span className="ml-auto text-xs font-medium bg-destructive text-destructive-foreground rounded-full px-1.5 py-0.5 min-w-5 text-center">
+                                {subItem.badge}
+                              </span>
+                            ) : null}
+                          </span>
                         ) : (
                           <a href={subItem.url}>
                             <span>{subItem.title}</span>

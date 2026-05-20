@@ -5,15 +5,18 @@ import (
 	"backend/todo_service/config"
 	"backend/todo_service/models"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
 
 type CreateTodoInput struct {
-	Title       string `json:"title" binding:"required"`
-	Description string `json:"description"`
-	Completed   bool   `json:"completed"`
-	CategoryID  *uint  `json:"category_id"`
+	Title       string          `json:"title" binding:"required"`
+	Description string          `json:"description"`
+	Completed   bool            `json:"completed"`
+	CategoryID  *uint           `json:"category_id"`
+	Priority    models.Priority `json:"priority"`
+	DueDate     *time.Time      `json:"due_date"`
 	Tags        []struct {
 		Name string `json:"name"`
 	} `json:"tags"`
@@ -28,15 +31,21 @@ func CreateTodo(c *gin.Context) {
 		return
 	}
 
+	priority := input.Priority
+	if priority == "" {
+		priority = models.PriorityMedium
+	}
+
 	todo := models.Todo{
 		Title:       input.Title,
 		Description: input.Description,
 		Completed:   input.Completed,
 		UserID:      userID,
 		CategoryID:  input.CategoryID,
+		Priority:    priority,
+		DueDate:     input.DueDate,
 	}
 
-	// Найти или создать теги
 	for _, t := range input.Tags {
 		if t.Name == "" {
 			continue
@@ -90,6 +99,23 @@ func GetTodoByID(c *gin.Context) {
 	})
 }
 
+func GetOverdueTodos(c *gin.Context) {
+	userID := c.GetUint("user_id")
+	var todos []models.Todo
+
+	now := time.Now()
+	if err := config.DB.
+		Preload("Category").
+		Preload("Tags").
+		Where("user_id = ? AND due_date < ? AND completed = false", userID, now).
+		Find(&todos).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch overdue todos"})
+		return
+	}
+
+	c.JSON(http.StatusOK, todos)
+}
+
 func UpdateTodo(c *gin.Context) {
 	id := c.Param("id")
 	userID := c.GetUint("user_id")
@@ -101,10 +127,12 @@ func UpdateTodo(c *gin.Context) {
 	}
 
 	var input struct {
-		Title       *string `json:"title"`
-		Description *string `json:"description"`
-		Completed   *bool   `json:"completed"`
-		CategoryID  *uint   `json:"category_id"`
+		Title       *string          `json:"title"`
+		Description *string          `json:"description"`
+		Completed   *bool            `json:"completed"`
+		CategoryID  *uint            `json:"category_id"`
+		Priority    *models.Priority `json:"priority"`
+		DueDate     *time.Time       `json:"due_date"`
 	}
 
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -123,6 +151,12 @@ func UpdateTodo(c *gin.Context) {
 	}
 	if input.CategoryID != nil {
 		todo.CategoryID = input.CategoryID
+	}
+	if input.Priority != nil {
+		todo.Priority = *input.Priority
+	}
+	if input.DueDate != nil {
+		todo.DueDate = input.DueDate
 	}
 
 	if err := config.DB.Save(&todo).Error; err != nil {

@@ -5,6 +5,14 @@ import (
 	"gorm.io/gorm"
 )
  
+type Priority string
+ 
+const (
+	PriorityLow    Priority = "low"
+	PriorityMedium Priority = "medium"
+	PriorityHigh   Priority = "high"
+)
+ 
 type Todo struct {
 	ID          uint           `json:"id" gorm:"primarykey"`
 	CreatedAt   time.Time      `json:"created_at"`
@@ -17,5 +25,7 @@ type Todo struct {
 	CategoryID  *uint          `json:"category_id"`
 	Category    Category       `json:"category" gorm:"foreignKey:CategoryID"`
 	Tags        []Tag          `json:"tags" gorm:"many2many:todo_tags;"`
+	Priority    Priority       `json:"priority" gorm:"default:'medium'"`
+	DueDate     *time.Time     `json:"due_date"`
 }
  

@@ -10,6 +10,7 @@ import { TodoProvider } from "@/store/todoStore"
 import { TodoList } from "@/components/todos/TodoList"
 import { AddTodoPage } from "@/components/todos/AddTodoPage"
 import { ProfilePage } from "@/components/profile/ProfilePage"
+import { OverduePage } from "@/components/todos/OverduePage"
 
 export default function Page() {
   const navigate = useNavigate()
@@ -18,6 +19,7 @@ export default function Page() {
   const getTitle = () => {
     if (location.pathname.includes("add-task")) return "Новая задача"
     if (location.pathname.includes("profile")) return "Профиль"
+    if (location.pathname.includes("overdue")) return "Просроченные"
     return "Задачи"
   }
 
@@ -45,6 +47,7 @@ export default function Page() {
                 element={<AddTodoPage onSuccess={() => navigate("/dashboard/tasks")} />}
               />
               <Route path="profile" element={<ProfilePage />} />
+              <Route path="overdue" element={<OverduePage />} />
             </Routes>
           </div>
         </SidebarInset>

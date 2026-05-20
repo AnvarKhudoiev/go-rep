@@ -20,6 +20,7 @@ interface TodoState {
   toggleTodo: (id: number, completed: boolean) => Promise<void>
   removeTodo: (id: number) => Promise<void>
   fetchCategories: () => Promise<void>
+  editTodo: (id: number, input: Partial<CreateTodoInput>) => Promise<void>
 }
 
 const TodoContext = createContext<TodoState | null>(null)
@@ -66,6 +67,11 @@ export function TodoProvider({ children }: { children: ReactNode }) {
     setTodos(prev => prev.filter(t => t.id !== id))
   }
 
+  const editTodo = async (id: number, input: Partial<CreateTodoInput>) => {
+    const updated = await updateTodo(id, input)
+    setTodos(prev => prev.map(t => t.id === id ? updated : t))
+  }
+
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchTodos()
@@ -83,6 +89,7 @@ export function TodoProvider({ children }: { children: ReactNode }) {
       toggleTodo,
       removeTodo,
       fetchCategories,
+      editTodo,
     }}>
       {children}
     </TodoContext.Provider>

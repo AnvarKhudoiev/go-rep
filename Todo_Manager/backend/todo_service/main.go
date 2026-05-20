@@ -34,7 +34,7 @@ func seedDefaultCategories() {
 }
 
 func main() {
-	err := godotenv.Load(".env")
+	err := godotenv.Load("todo_service/.env")
 	if err != nil {
 		log.Println("Warning: Error loading .env file. Using system environment variables.")
 	}
@@ -54,16 +54,25 @@ func main() {
 	api := r.Group("/api")
 	api.Use(middleware.AuthMiddleware())
 	{
+		// Todos — overdue ДОЛЖЕН быть до /:id иначе gin матчит "overdue" как id
+		api.GET("/todos/overdue", handlers.GetOverdueTodos)
 		api.POST("/todos", handlers.CreateTodo)
 		api.GET("/todos", handlers.GetTodos)
 		api.GET("/todos/:id", handlers.GetTodoByID)
 		api.PUT("/todos/:id", handlers.UpdateTodo)
 		api.DELETE("/todos/:id", handlers.DeleteTodo)
 
+		// Categories — полный CRUD
 		api.POST("/categories", handlers.CreateCategory)
 		api.GET("/categories", handlers.GetCategories)
+		api.GET("/categories/:id", handlers.GetCategoryByID)
+		api.PUT("/categories/:id", handlers.UpdateCategory)
+		api.DELETE("/categories/:id", handlers.DeleteCategory)
+
+		// Stats
 		api.GET("/stats", handlers.GetStats)
 	}
+
 
 	r.GET("/test-resty/:user_id", func(c *gin.Context) {
 		var userID uint

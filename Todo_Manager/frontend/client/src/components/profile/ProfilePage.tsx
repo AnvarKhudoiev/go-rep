@@ -49,19 +49,31 @@ export function ProfilePage() {
       </div>
 
       {/* Счётчики */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
         {[
-          { label: "Всего задач",  value: stats.total,           color: "text-foreground"  },
-          { label: "Активных",     value: stats.active,          color: "text-blue-500"    },
-          { label: "Выполнено",    value: stats.completed,       color: "text-green-500"   },
+          { label: "Всего задач",  value: stats.total,              color: "text-foreground"   },
+          { label: "Активных",     value: stats.active,             color: "text-blue-500"     },
+          { label: "Выполнено",    value: stats.completed,          color: "text-green-500"    },
+          { label: "Просрочено",   value: stats.overdue,            color: "text-destructive"  },
           { label: "Прогресс",     value: `${stats.completion_rate}%`, color: "text-orange-500" },
         ].map(item => (
-          <div key={item.label} className="rounded-xl border border-border bg-card p-4 space-y-1">
+          <div key={item.label} className={`rounded-xl border bg-card p-4 space-y-1 ${
+            item.label === "Просрочено" && stats.overdue > 0
+              ? "border-destructive/50"
+              : "border-border"
+          }`}>
             <p className="text-xs text-muted-foreground">{item.label}</p>
             <p className={`text-3xl font-bold ${item.color}`}>{item.value}</p>
           </div>
         ))}
       </div>
+
+      {/* Предупреждение если есть просроченные */}
+      {stats.overdue > 0 && (
+        <div className="rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+          У вас {stats.overdue} просроченных {stats.overdue === 1 ? "задача" : "задач"}. Пора разобраться!
+        </div>
+      )}
 
       {/* Bar chart — 7 дней */}
       <div className="rounded-xl border border-border bg-card p-5 space-y-3">
@@ -77,8 +89,8 @@ export function ProfilePage() {
                 contentStyle={{ fontSize: 12, borderRadius: 8, border: "1px solid var(--border)" }}
                 labelStyle={{ fontWeight: 500 }}
               />
-              <Bar dataKey="created"   name="Создано"    fill="#94a3b8" radius={[4,4,0,0]} />
-              <Bar dataKey="completed" name="Выполнено"  fill="#22c55e" radius={[4,4,0,0]} />
+              <Bar dataKey="created"   name="Создано"   fill="#94a3b8" radius={[4,4,0,0]} />
+              <Bar dataKey="completed" name="Выполнено" fill="#22c55e" radius={[4,4,0,0]} />
             </BarChart>
           </ResponsiveContainer>
         )}
