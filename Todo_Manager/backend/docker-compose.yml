@@ -1,0 +1,87 @@
+version: '3.8'
+
+services:
+  auth_db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: auth_db
+    ports:
+      - "5441:5432"
+    volumes:
+      - auth_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d auth_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  todo_db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: todo_db
+    ports:
+      - "5442:5432"
+    volumes:
+      - todo_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d todo_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  auth_service:
+    build:
+      context: .
+      dockerfile: auth_service/Dockerfile
+    ports:
+      - "8081:8081"
+    depends_on:
+      auth_db:
+        condition: service_healthy
+    restart: always
+    environment:
+      - DB_HOST=auth_db
+      - DB_PORT=5432
+      - DB_USER=user
+      - DB_PASSWORD=password
+      - DB_NAME=auth_db
+      - JWT_SECRET=your_super_secret_key
+
+  todo_service:
+    build:
+      context: .
+      dockerfile: todo_service/Dockerfile
+    ports:
+      - "8082:8082"
+    depends_on:
+      todo_db:
+        condition: service_healthy
+      auth_service:
+        condition: service_started
+    restart: always
+    environment:
+      - DB_HOST=todo_db
+      - DB_PORT=5432
+      - DB_USER=user
+      - DB_PASSWORD=password
+      - DB_NAME=todo_db
+      - JWT_SECRET=your_super_secret_key
+
+  frontend:
+    build:
+      context: ../frontend/client
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"
+    depends_on:
+      - auth_service
+      - todo_service
+    restart: always
+
+volumes:
+  auth_db_data:
+  todo_db_data:

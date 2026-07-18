@@ -1,0 +1,9 @@
+CREATE TABLE IF NOT EXISTS tags (
+    id SERIAL PRIMARY KEY,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    deleted_at TIMESTAMP WITH TIME ZONE,
+    name VARCHAR(255) NOT NULL UNIQUE
+);
+ 
+CREATE INDEX IF NOT EXISTS idx_tags_deleted_at ON tags(deleted_at);
